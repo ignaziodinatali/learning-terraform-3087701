@@ -1,24 +1,20 @@
-data "aws_ami" "app_ami" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["bitnami-tomcat-*-x86_64-hvm-ebs-nami"]
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+      version = "4.51.0"
+    }
   }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["979382823631"] # Bitnami
 }
 
-resource "aws_instance" "web" {
-  ami           = data.aws_ami.app_ami.id
-  instance_type = "t3.nano"
+provider "google" {
+  credentials = file("../mm.json")
 
-  tags = {
-    Name = "HelloWorld"
-  }
+  project = var.project_name
+  region  = var.region_name
+  #zone    = "us-central1-c"
+}
+
+resource "google_compute_network" "vpc_network" {
+  name = var.vpc_name
 }
